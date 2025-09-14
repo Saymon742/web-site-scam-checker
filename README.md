@@ -7,10 +7,11 @@ This project uses VirusTotal, as well as its own methods for checking for scams.
 
 <h1>HOW TO USE THIS TOOL FILE?</h1>
 
+1.Install all dependencies with the command **"pip install -r requirements.txt"**
 
-To get started, run the **.bat** file
+2.To get started, run the **.bat** file
 ![photo bat file](screens_for_readmeMd/image.png)
-which will create all the necessary files as well as the .exe file itself.
+  which will create all the necessary files as well as the .exe file itself.
 
 After the process of creating all the files is complete, go to the **dist** folder and run the **.exe** file located there.
 
