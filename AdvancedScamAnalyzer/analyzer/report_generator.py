@@ -22,7 +22,7 @@ class ReportGenerator:
         self._print_content_analysis(results)
         self._print_contacts(results)
         self._print_redirects(results)
-        self._print_recommendations(results)
+        self._print_recommendations(results, url)
 
     def _print_verdict(self, results):
         verdict = results['final_verdict']
@@ -54,4 +54,68 @@ class ReportGenerator:
             if domain.get('days_until_expiry'):
                 print(f"   • Дней до истечения: {domain['days_until_expiry']}")
 
-    # ... остальные методы _print_* для разных разделов отчета
+    def _print_virus_total(self, results):
+        vt_data = results.get('virus_total', {})
+        if 'error' not in vt_data:
+            print(f"\n🛡️  VIRUSTOTAL РЕЗУЛЬТАТЫ:")
+            print(f"   • Вредоносные сигнатуры: {vt_data.get('malicious', 0)}")
+            print(f"   • Подозрительные сигнатуры: {vt_data.get('suspicious', 0)}")
+            print(f"   • Безопасные сигнатуры: {vt_data.get('harmless', 0)}")
+            print(f"   • Всего проверок: {vt_data.get('total_engines', 0)}")
+        elif vt_data.get('error'):
+            print(f"\n❌ VirusTotal: {vt_data['error']}")
+
+    def _print_ssl_info(self, results):
+        ssl_info = results.get('ssl_info', {})
+        print(f"\n🔐 SSL-СЕРТИФИКАТ: {'✅ Присутствует' if ssl_info.get('has_ssl') else '❌ Отсутствует'}")
+        if ssl_info.get('ssl_days_until_expiry'):
+            print(f"   • Дней до истечения SSL: {ssl_info['ssl_days_until_expiry']}")
+
+    def _print_content_analysis(self, results):
+        content = results['content_analysis']
+        print(f"\n📝 АНАЛИЗ КОНТЕНТА:")
+        print(f"   • Обнаружено шаблонов мошенничества: {content['scam_indicators_count']}")
+        if content['detected_patterns']:
+            print(f"   • Обнаруженные паттерны: {', '.join(content['detected_patterns'][:3])}...")
+
+    def _print_contacts(self, results):
+        contacts = results.get('contacts', {})
+        if contacts.get('phones') or contacts.get('emails'):
+            print(f"\n📞 КОНТАКТНЫЕ ДАННЫЕ:")
+            if contacts['phones']:
+                print(f"   • Телефоны: {', '.join(contacts['phones'][:2])}")
+            if contacts['emails']:
+                print(f"   • Emails: {', '.join(contacts['emails'][:2])}")
+
+    def _print_redirects(self, results):
+        redirects = results.get('redirect_info', {})
+        if redirects.get('redirected'):
+            print(f"\n🔄 РЕДИРЕКТЫ:")
+            print(f"   • Перенаправлено с: {redirects['original_url']}")
+            print(f"   • Перенаправлено на: {redirects['final_url']}")
+            print(f"   • Количество редиректов: {redirects['redirect_count']}")
+
+    def _print_recommendations(self, results, url):
+        verdict = results['final_verdict']
+        
+        print(f"\n{'='*70}")
+        
+        if verdict['risk_level'] in ['CRITICAL', 'HIGH']:
+            print("\n🚨 РЕКОМЕНДАЦИИ:")
+            print("   • НЕ вводите личные данные")
+            print("   • НЕ совершайте платежи")
+            print("   • НЕ скачивайте файлы")
+            print("   • Закройте сайт и не возвращайтесь")
+        elif verdict['risk_level'] == 'MEDIUM':
+            print("\n⚠️  РЕКОМЕНДАЦИИ:")
+            print("   • Будьте осторожны с личными данными")
+            print("   • Проверяйте отзывы о сайте")
+            print("   • Используйте двухфакторную аутентификацию")
+        
+        # Получаем домен из результатов или из исходного URL
+        final_url = results.get('redirect_info', {}).get('final_url', url)
+        domain_name = urlparse(final_url).netloc
+        
+        print(f"\n💡 Для подробного отчета посетите:")
+        print(f"   https://www.virustotal.com/gui/domain/{domain_name}")
+        print(f"   https://www.whois.com/whois/{domain_name}")

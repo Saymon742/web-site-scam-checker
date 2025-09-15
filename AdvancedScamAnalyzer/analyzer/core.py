@@ -1,15 +1,30 @@
 import requests
 from urllib.parse import urlparse
 
-from config import HEADERS
-from utils.printers import print_progress, print_success, print_error
 from .content_analyzer import ContentAnalyzer
 from .domain_analyzer import DomainAnalyzer
 from .security_analyzer import SecurityAnalyzer
 from .risk_assessor import RiskAssessor
 from .report_generator import ReportGenerator
 
-class AdvancedScamReporter:
+try:
+    # Для обычного запуска
+    from config import HEADERS
+    from utils.printers import print_progress, print_success, print_error
+except ImportError:
+    # Для PyInstaller
+    import os
+    import sys
+    
+    # Добавляем корневую директорию в путь
+    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if current_dir not in sys.path:
+        sys.path.insert(0, current_dir)
+    
+    from config import HEADERS
+    from utils.printers import print_progress, print_success, print_error
+
+class AdvancedScamReporter: 
     def __init__(self):
         self.headers = HEADERS
         self.content_analyzer = ContentAnalyzer()
@@ -19,7 +34,7 @@ class AdvancedScamReporter:
         self.report_generator = ReportGenerator()
 
     def analyze_website(self, url):
-        results = {}
+        results = {}  # ← Убедитесь, что здесь нет синтаксической ошибки
         
         try:
             parsed_url = urlparse(url)

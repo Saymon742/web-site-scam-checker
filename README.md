@@ -10,13 +10,21 @@ This project uses VirusTotal, as well as its own methods for checking for scams.
 1.Install all dependencies with the command **"pip install -r requirements.txt"**
 
 2.To get started, run the **.bat** file
-![photo bat file](screens_for_readmeMd/image.png)
+![photo bat file](images/image.png)
   which will create all the necessary files as well as the .exe file itself.
 
 3.After the process of creating all the files is complete, go to the **dist** folder and run the **.exe** file located there.
 
 4.After launching, you will see a field for entering the **URL** of the site you want to check.
-![photo start of programm](screens_for_readmeMd/image2.png)
+![photo start of programm](images/image2.png)
 
 5.After checking, it will show you all its dangers, contact numbers, and the results of the *VirusTotal* check.
-![photo of end the programm](screens_for_readmeMd/image3.png)
+![photo of end the programm](images/image3.png)
+
+
+OR
+
+
+<a href="ScamChecker.exe" download>
+  <btn>DOWNLOAD</btn>
+</a>

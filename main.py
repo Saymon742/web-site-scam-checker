@@ -1,4 +1,5 @@
-from analyzer import AdvancedScamReporter
+from analyzer.core import AdvancedScamReporter
+from utils.printers import print_progress, print_success, print_error
 
 def main():
     print("🔍 ПРОДВИНУТЫЙ АНАЛИЗАТОР БЕЗОПАСНОСТИ САЙТОВ")
@@ -14,10 +15,16 @@ def main():
     print(f"\nНачинаем расширенный анализ сайта: {url}")
     print("Это может занять несколько минут...\n")
     
-    reporter = AdvancedScamReporter()
-    results = reporter.analyze_website(url)
-    reporter.generate_report(url, results)
+    try:
+        reporter = AdvancedScamReporter()
+        results = reporter.analyze_website(url)
+        reporter.generate_report(url, results)
+    except KeyboardInterrupt:
+        print_error("\nАнализ прерван пользователем")
+    except Exception as e:
+        print_error(f"Критическая ошибка: {e}")
+    
+    input("\nНажмите Enter для выхода...")
 
 if __name__ == "__main__":
     main()
-    input()

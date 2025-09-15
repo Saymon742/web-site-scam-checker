@@ -1,8 +1,11 @@
 import re
-from urllib.parse import urlparse, urljoin
+import os
+import sys
+import math
 from datetime import datetime
-import ipaddress
-import tldextract
+from collections import Counter
+from urllib.parse import urlparse
+from bs4 import BeautifulSoup
 
 def is_valid_url(url):
     """
@@ -32,15 +35,26 @@ def normalize_url(url):
 
 def extract_domain(url):
     """
-    Извлекает домен из URL с помощью tldextract
+    Извлекает домен из URL без tldextract
     """
     try:
-        extracted = tldextract.extract(url)
-        return f"{extracted.domain}.{extracted.suffix}"
-    except:
+        from urllib.parse import urlparse
         parsed = urlparse(url)
-        return parsed.netloc
-
+        if not parsed.netloc:
+            return None
+        
+        # Убираем www и порт
+        domain = parsed.netloc.lower()
+        if domain.startswith('www.'):
+            domain = domain[4:]
+        
+        # Убираем порт если есть
+        if ':' in domain:
+            domain = domain.split(':')[0]
+            
+        return domain
+    except:
+        return None
 def is_ip_address(domain):
     """
     Проверяет, является ли домен IP-адресом
@@ -150,6 +164,9 @@ def is_suspicious_domain(domain):
     """
     Проверяет домен на подозрительные признаки
     """
+    if not domain:
+        return False
+        
     suspicious_patterns = [
         r'\d{4,}',  # Много цифр
         r'[a-z]{12,}',  # Очень длинные имена
